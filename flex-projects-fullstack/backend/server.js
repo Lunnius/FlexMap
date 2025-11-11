@@ -2,24 +2,10 @@ require('dotenv').config();
 const express = require('express');
 const mysql = require('mysql2/promise');
 const cors = require('cors');
-
 const fs = require('fs');
 
-const pool = mysql.createPool({
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASS,
-  database: process.env.DB_NAME,
-  port: process.env.DB_PORT,
-  ssl: {
-    ca: fs.readFileSync(process.env.DB_SSL_CA_PATH)
-  }
-});
-
 const app = express();
-const cors = require('cors');
-app.use(cors({ origin: '*' })); // Permite qualquer origem (ou especifique: 'http://127.0.0.1:5500')
-app.use(cors());
+app.use(cors({ origin: '*' }));
 app.use(express.json());
 
 const pool = mysql.createPool({
@@ -27,7 +13,10 @@ const pool = mysql.createPool({
   user: process.env.DB_USER,
   password: process.env.DB_PASS,
   database: process.env.DB_NAME,
-  ssl: { rejectUnauthorized: true }
+  port: process.env.DB_PORT || 4000,
+  ssl: {
+    ca: fs.readFileSync(process.env.DB_SSL_CA_PATH)
+  }
 });
 
 app.get('/api/prazos', async (_req, res) => {
