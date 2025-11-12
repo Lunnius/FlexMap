@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const mysql = require('mysql2/promise');
 const cors = require('cors');
+app.use(cors({ origin: '*' })); // libera qualquer origem (inclui o frontend)
 const fs = require('fs');
 
 const app = express();
@@ -51,3 +52,4 @@ app.delete('/api/prazos/:id', async (req, res) => {
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Rodando na porta ${PORT}`));
+
