@@ -926,6 +926,12 @@ function showProjectList(type) {
     else status = 'pending';
     return { ...p, status };
   });
+  filtered.forEach(p => {
+  if (!p.name) {
+    console.warn("⚠️ Projeto sem nome detectado:", p);
+  }
+});
+
   if (type === 'active') filtered = filtered.filter(p => p.status === 'in-progress');
   if (type === 'completed') filtered = filtered.filter(p => p.status === 'completed');
   if (type === 'pending') filtered = filtered.filter(p => p.status === 'pending' || p.status === 'overdue');
@@ -960,6 +966,12 @@ function renderTimeline() {
     const stb = today < new Date(b.startDate) ? 'pending' : (today > new Date(b.endDate) && b.status !== 'completed') ? 'overdue' : 'in-progress';
     return order[sta] - order[stb];
   });
+  sorted.forEach(p => {
+  if (!p.name) {
+    console.warn("⚠️ Projeto sem nome detectado na timeline:", p);
+  }
+});
+
   sorted.forEach(p => {
     const start = new Date(p.startDate);
     const end = new Date(p.endDate);
@@ -1992,3 +2004,4 @@ document.addEventListener('DOMContentLoaded', () => {
 </script>
 </body>
 </html>
+
