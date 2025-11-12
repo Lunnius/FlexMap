@@ -30,10 +30,11 @@ app.get('/api/prazos', async (_req, res) => {
     const [rows] = await pool.query('SELECT * FROM prazos ORDER BY data_fim ASC');
     res.json(rows);
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Erro ao buscar prazos' });
+    console.error('❌ Erro SQL:', err.message);
+    res.status(500).json({ error: 'Erro ao buscar prazos', details: err.message });
   }
 });
+
 
 app.post('/api/prazos', async (req, res) => {
   try {
@@ -78,3 +79,4 @@ app.delete('/api/prazos/:id', async (req, res) => {
 // --- Inicialização do servidor ---
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Servidor rodando na porta ${PORT}`));
+
