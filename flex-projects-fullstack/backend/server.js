@@ -2,6 +2,17 @@ require('dotenv').config();
 const express = require('express');
 const mysql = require('mysql2/promise');
 const cors = require('cors');
+const app = express();
+
+// permite acesso do seu front hospedado no Render
+app.use(cors({
+  origin: ['https://flex-frontend-2ot3.onrender.com', 'http://localhost:3000'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  credentials: true
+}));
+
+app.use(express.json());
+
 const fs = require('fs');
 
 const app = express();
@@ -79,4 +90,5 @@ app.delete('/api/prazos/:id', async (req, res) => {
 // --- Inicialização do servidor ---
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Servidor rodando na porta ${PORT}`));
+
 
