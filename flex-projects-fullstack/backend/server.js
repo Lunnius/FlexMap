@@ -2,9 +2,11 @@ require('dotenv').config();
 const express = require('express');
 const mysql = require('mysql2/promise');
 const cors = require('cors');
+const fs = require('fs');
+
 const app = express();
 
-// permite acesso do seu front hospedado no Render
+// --- CORS: permite o frontend do Render e localhost ---
 app.use(cors({
   origin: ['https://flex-frontend-2ot3.onrender.com', 'http://localhost:3000'],
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
@@ -13,17 +15,7 @@ app.use(cors({
 
 app.use(express.json());
 
-const fs = require('fs');
-
-const app = express();
-
-// --- Configuração de CORS ---
-// Pode deixar "*" para aceitar qualquer origem (funciona com seu frontend Render)
-app.use(cors({ origin: '*' }));
-
-app.use(express.json());
-
-// --- Conexão com o banco ---
+// --- Conexão com o banco TiDB ---
 const pool = mysql.createPool({
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
@@ -46,7 +38,6 @@ app.get('/api/prazos', async (_req, res) => {
   }
 });
 
-
 app.post('/api/prazos', async (req, res) => {
   try {
     const { nome, descricao, tipo, data_inicio, data_fim, estado, endereco, latitude, longitude } = req.body;
@@ -57,8 +48,8 @@ app.post('/api/prazos', async (req, res) => {
     );
     res.json({ msg: 'Criado' });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Erro ao criar prazo' });
+    console.error('❌ Erro SQL:', err.message);
+    res.status(500).json({ error: 'Erro ao criar prazo', details: err.message });
   }
 });
 
@@ -72,8 +63,8 @@ app.put('/api/prazos/:id', async (req, res) => {
     await pool.query(`UPDATE prazos SET ${set} WHERE id = ?`, [...values, id]);
     res.json({ msg: 'Atualizado' });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Erro ao atualizar prazo' });
+    console.error('❌ Erro SQL:', err.message);
+    res.status(500).json({ error: 'Erro ao atualizar prazo', details: err.message });
   }
 });
 
@@ -82,13 +73,11 @@ app.delete('/api/prazos/:id', async (req, res) => {
     await pool.query('DELETE FROM prazos WHERE id = ?', [req.params.id]);
     res.json({ msg: 'Deletado' });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Erro ao deletar prazo' });
+    console.error('❌ Erro SQL:', err.message);
+    res.status(500).json({ error: 'Erro ao deletar prazo', details: err.message });
   }
 });
 
 // --- Inicialização do servidor ---
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Servidor rodando na porta ${PORT}`));
-
-
