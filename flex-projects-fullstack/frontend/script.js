@@ -5,6 +5,15 @@ const API = 'https://flexmap.onrender.com/api/prazos'; // <-- mude depois
 async function loadProjects() {
   const res = await fetch(API);
   projects = await res.json();
+  // 🔧 Normaliza nomes e datas do backend
+projects = projects.map(p => ({
+  ...p,
+  name: p.name || p.nome || "Sem nome",
+  startDate: p.startDate || p.data_inicio,
+  endDate: p.endDate || p.data_fim,
+  type: p.type || p.tipo || "Outro"
+}));
+
   updateDashboard(); renderTimeline(); renderCalendar(); addProjectMarkers();
 }
 
@@ -46,4 +55,5 @@ async function deleteProject(id) {
 // no lugar de deleteProject() local → chame deleteProject(id)
 
 // ----- inicie tudo -----
+
 loadProjects();
