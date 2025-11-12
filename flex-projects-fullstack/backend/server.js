@@ -6,11 +6,11 @@ const fs = require('fs');
 
 const app = express();
 
-// --- CORS: permite o frontend do Render e localhost ---
+// --- CORS: libera todas as origens (resolve erro no Render) ---
 app.use(cors({
-  origin: ['https://flex-frontend-2ot3.onrender.com', 'http://localhost:3000'],
+  origin: '*',
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  credentials: true
+  allowedHeaders: ['Content-Type']
 }));
 
 app.use(express.json());
@@ -46,7 +46,7 @@ app.post('/api/prazos', async (req, res) => {
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [nome, descricao, tipo, data_inicio, data_fim, estado, endereco, latitude, longitude]
     );
-    res.json({ msg: 'Criado' });
+    res.json({ msg: 'Criado com sucesso!' });
   } catch (err) {
     console.error('❌ Erro SQL:', err.message);
     res.status(500).json({ error: 'Erro ao criar prazo', details: err.message });
@@ -61,7 +61,7 @@ app.put('/api/prazos/:id', async (req, res) => {
     const values = Object.values(fields);
     const set = keys.map(k => `${k} = ?`).join(', ');
     await pool.query(`UPDATE prazos SET ${set} WHERE id = ?`, [...values, id]);
-    res.json({ msg: 'Atualizado' });
+    res.json({ msg: 'Atualizado com sucesso!' });
   } catch (err) {
     console.error('❌ Erro SQL:', err.message);
     res.status(500).json({ error: 'Erro ao atualizar prazo', details: err.message });
@@ -71,7 +71,7 @@ app.put('/api/prazos/:id', async (req, res) => {
 app.delete('/api/prazos/:id', async (req, res) => {
   try {
     await pool.query('DELETE FROM prazos WHERE id = ?', [req.params.id]);
-    res.json({ msg: 'Deletado' });
+    res.json({ msg: 'Deletado com sucesso!' });
   } catch (err) {
     console.error('❌ Erro SQL:', err.message);
     res.status(500).json({ error: 'Erro ao deletar prazo', details: err.message });
@@ -80,4 +80,4 @@ app.delete('/api/prazos/:id', async (req, res) => {
 
 // --- Inicialização do servidor ---
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Servidor rodando na porta ${PORT}`));
+app.listen(PORT, () => console.log(`✅ Servidor rodando na porta ${PORT}`));
